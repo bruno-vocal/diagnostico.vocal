@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Vocal - Bruno Phelipe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        input, textarea { font-size: 16px !important; } 
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-slate-900">
+        <div class="bg-white rounded-[2rem] shadow-2xl p-6 sm:p-10 w-full max-w-sm">
+            <div class="text-center mb-8 sm:mb-10">
+                <div class="bg-indigo-600 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-xl shadow-indigo-500/40">
+                    <i data-lucide="mic-2" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Portal Vocal</h2>
+                <p class="text-slate-500 text-sm mt-1">Bruno Phelipe</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="relative">
+                    <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="text" id="login-email" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700" placeholder="E-mail de acesso">
+                </div>
+                <div class="relative">
+                    <i data-lucide="key" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="password" id="login-pass" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700" placeholder="Sua senha">
+                </div>
+                <button onclick="tentarLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2">
+                    Entrar no Portal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden">
+        <nav class="glass-nav sticky top-0 z-50 p-4">
+            <div class="max-w-5xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2 font-black text-slate-900 uppercase tracking-tighter text-base sm:text-lg">
+                    <i data-lucide="waves" class="text-indigo-600 w-5 h-5"></i> BRUNO PHELIPE
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="text-right">
+                        <p id="display-user-name" class="text-xs sm:text-sm font-bold text-slate-800 leading-none"></p>
+                        <span id="display-role" class="text-[9px] sm:text-[10px] uppercase text-indigo-500 font-bold tracking-widest"></span>
+                    </div>
+                    <button onclick="logout()" class="bg-slate-100 text-slate-500 hover:text-rose-500 p-2 sm:p-2.5 rounded-xl transition-all">
+                        <i data-lucide="log-out" class="w-4 h-4 sm:w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto p-4 sm:p-6">
+            
+            <div id="admin-view" class="hidden space-y-6 sm:space-y-8">
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                    <h2 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
+                        <i data-lucide="user-plus" class="text-indigo-600 w-5 h-5"></i> Cadastrar Aluno
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="st-name" placeholder="Nome Completo" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <input type="email" id="st-email" placeholder="E-mail do Aluno" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <input type="text" id="st-pass" placeholder="Senha para o Aluno" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <input type="text" id="st-link" placeholder="Link do PDF (Google Drive)" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <textarea id="st-notes" placeholder="Observações e diagnóstico..." class="p-4 bg-slate-50 border border-slate-200 rounded-2xl md:col-span-2 h-32 outline-none focus:ring-2 focus:ring-indigo-500 w-full"></textarea>
+                    </div>
+                    <button onclick="cadastrarAluno()" class="mt-6 w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-extrabold hover:bg-indigo-700 transition-all shadow-md">
+                        SALVAR E PUBLICAR
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 overflow-hidden card-shadow">
+                    <div class="p-5 sm:p-6 border-b bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-2 font-bold text-slate-700">
+                            <i data-lucide="users" class="w-5 h-5"></i> Alunos Cadastrados
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportarDados()" title="Exportar Backup" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition-all">
+                                <i data-lucide="download" class="w-4 h-4"></i> Backup
+                            </button>
+                            <label class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all">
+                                <i data-lucide="upload" class="w-4 h-4"></i> Importar
+                                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importarDados(event)">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-slate-100" id="lista-alunos"></div>
+                </div>
+            </div>
+
+            <div id="student-view" class="hidden space-y-4 sm:space-y-6">
+                <div class="bg-indigo-600 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-indigo-200 font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-2">Professor Bruno Phelipe</p>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-2">Seu Plano Vocal</h2>
+                        <p class="text-indigo-100 text-base sm:text-lg opacity-90" id="welcome-msg"></p>
+                    </div>
+                    <i data-lucide="activity" class="absolute -right-6 -bottom-6 w-32 h-32 sm:w-48 sm:h-48 text-white/10 -rotate-12"></i>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-base sm:text-lg">
+                        <i data-lucide="text-quote" class="text-indigo-600 w-5 h-5"></i> Observações Técnicas:
+                    </h3>
+                    <p id="student-notes-display" class="text-slate-600 leading-relaxed italic bg-slate-50 p-4 sm:p-6 rounded-2xl border-l-4 border-indigo-500 font-medium text-sm sm:text-base"></p>
+                </div>
+
+                <div id="link-container"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('bruno_vocal_db')) || [];
+
+        function tentarLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+
+            if (email === 'bruno@vocal.com' && pass === 'admin123') {
+                showApp('admin', { name: 'Bruno Phelipe' });
+                return;
+            }
+
+            const aluno = db.find(a => a.email === email && a.pass === pass);
+            if (aluno) {
+                showApp('student', aluno);
+            } else {
+                alert('E-mail ou senha incorretos.');
+            }
+        }
+
+        function showApp(role, user) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('display-user-name').innerText = user.name;
+            document.getElementById('display-role').innerText = role === 'admin' ? 'Acesso Professor' : 'Acesso Aluno';
+
+            if (role === 'admin') {
+                document.getElementById('admin-view').classList.remove('hidden');
+                document.getElementById('student-view').classList.add('hidden');
+                renderAlunos();
+            } else {
+                document.getElementById('student-view').classList.remove('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+                document.getElementById('student-notes-display').innerText = user.notes || 'Notas em breve.';
+                document.getElementById('welcome-msg').innerText = `Olá, ${user.name.split(' ')[0]}!`;
+                
+                const linkDiv = document.getElementById('link-container');
+                if (user.link) {
+                    linkDiv.innerHTML = `
+                        <a href="${user.link}" target="_blank" class="flex items-center justify-between bg-slate-900 text-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] font-bold hover:bg-black transition-all shadow-xl shadow-slate-200 group">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <div class="bg-indigo-600 p-2 sm:p-3 rounded-xl"><i data-lucide="file-down" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                                <span class="text-sm sm:text-lg">BAIXAR MEU DIAGNÓSTICO PDF</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-all"></i>
+                        </a>`;
+                } else { linkDiv.innerHTML = ""; }
+            }
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        function cadastrarAluno() {
+            const name = document.getElementById('st-name').value;
+            const email = document.getElementById('st-email').value;
+            const pass = document.getElementById('st-pass').value;
+            const link = document.getElementById('st-link').value;
+            const notes = document.getElementById('st-notes').value;
+
+            if(!name || !email || !pass) return alert('Campos obrigatórios faltando.');
+
+            db.push({ id: Date.now(), name, email, pass, link, notes });
+            localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
+            document.querySelectorAll('#admin-view input, #admin-view textarea').forEach(i => i.value = '');
+            renderAlunos();
+            alert('Cadastrado!');
+        }
+
+        function renderAlunos() {
+            const lista = document.getElementById('lista-alunos');
+            if (db.length === 0) {
+                lista.innerHTML = `<p class="p-10 text-center text-slate-400 italic">Vazio.</p>`;
+                return;
+            }
+            lista.innerHTML = db.map(a => `
+                <div class="p-4 sm:p-6 flex justify-between items-center hover:bg-slate-50">
+                    <div class="max-w-[70%]">
+                        <p class="font-bold text-slate-800 text-sm sm:text-base truncate">${a.name}</p>
+                        <p class="text-[10px] sm:text-xs text-slate-500 mt-1">E-mail: ${a.email} | Senha: ${a.pass}</p>
+                    </div>
+                    <button onclick="deletarAluno(${a.id})" class="text-rose-400 p-2 hover:bg-rose-50 rounded-xl"><i data-lucide="user-minus" class="w-5 h-5"></i></button>
+                </div>`).join('');
+            lucide.createIcons();
+        }
+
+        function deletarAluno(id) {
+            if(confirm('Excluir?')) {
+                db = db.filter(a => a.id !== id);
+                localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
+                renderAlunos();
+            }
+        }
+
+        function exportarDados() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "backup_alunos_vocal.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importarDados(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedDb = JSON.parse(e.target.result);
+                    if (confirm(`Deseja importar ${importedDb.length} alunos? Isso substituirá os dados atuais.`)) {
+                        db = importedDb;
+                        localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
+                        renderAlunos();
+                        alert('Dados importados!');
+                    }
+                } catch (err) { alert('Arquivo inválido.'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function logout() { location.reload(); }
+        lucide.createIcons();
+    </script>
+</body>
+</html>
