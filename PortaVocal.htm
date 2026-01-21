@@ -6,12 +6,16 @@
     <title>Portal Vocal - Bruno Phelipe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
         .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
-        input, textarea { font-size: 16px !important; } 
+        input, textarea, select { font-size: 16px !important; } 
+        .goal-card { transition: all 0.3s ease; }
+        .goal-card:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -38,6 +42,17 @@
                 <button onclick="tentarLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2">
                     Entrar no Portal
                 </button>
+                
+                <div class="mt-6 pt-6 border-t border-slate-200">
+                    <p class="text-center text-xs text-slate-500 mb-3">Ou acesse com código de aluno:</p>
+                    <div class="relative">
+                        <i data-lucide="hash" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                        <input type="text" id="student-code" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700 uppercase" placeholder="CÓDIGO" maxlength="6">
+                    </div>
+                    <button onclick="acessarComCodigo()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl transition-all mt-3 active:scale-95">
+                        Acessar como Aluno
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -54,7 +69,7 @@
                         <span id="display-role" class="text-[9px] sm:text-[10px] uppercase text-indigo-500 font-bold tracking-widest"></span>
                     </div>
                     <button onclick="logout()" class="bg-slate-100 text-slate-500 hover:text-rose-500 p-2 sm:p-2.5 rounded-xl transition-all">
-                        <i data-lucide="log-out" class="w-4 h-4 sm:w-5 h-5"></i>
+                        <i data-lucide="log-out" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     </button>
                 </div>
             </div>
@@ -67,34 +82,81 @@
                     <h2 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
                         <i data-lucide="user-plus" class="text-indigo-600 w-5 h-5"></i> Cadastrar Aluno
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                         <input type="text" id="st-name" placeholder="Nome Completo" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
-                        <input type="email" id="st-email" placeholder="E-mail do Aluno" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
-                        <input type="text" id="st-pass" placeholder="Senha para o Aluno" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
-                        <input type="text" id="st-link" placeholder="Link do PDF (Google Drive)" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
-                        <textarea id="st-notes" placeholder="Observações e diagnóstico..." class="p-4 bg-slate-50 border border-slate-200 rounded-2xl md:col-span-2 h-32 outline-none focus:ring-2 focus:ring-indigo-500 w-full"></textarea>
+                        <input type="text" id="st-link" placeholder="Link do PDF (Google Drive) - Opcional" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <textarea id="st-notes" placeholder="Observações gerais (opcional)..." class="p-4 bg-slate-50 border border-slate-200 rounded-2xl h-24 outline-none focus:ring-2 focus:ring-indigo-500 w-full"></textarea>
                     </div>
                     <button onclick="cadastrarAluno()" class="mt-6 w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-extrabold hover:bg-indigo-700 transition-all shadow-md">
-                        SALVAR E PUBLICAR
+                        CADASTRAR E FAZER DIAGNÓSTICO
                     </button>
                 </div>
 
                 <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 overflow-hidden card-shadow">
-                    <div class="p-5 sm:p-6 border-b bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="p-5 sm:p-6 border-b bg-slate-50/50">
                         <div class="flex items-center gap-2 font-bold text-slate-700">
                             <i data-lucide="users" class="w-5 h-5"></i> Alunos Cadastrados
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="exportarDados()" title="Exportar Backup" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition-all">
-                                <i data-lucide="download" class="w-4 h-4"></i> Backup
-                            </button>
-                            <label class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all">
-                                <i data-lucide="upload" class="w-4 h-4"></i> Importar
-                                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importarDados(event)">
-                            </label>
-                        </div>
                     </div>
                     <div class="divide-y divide-slate-100" id="lista-alunos"></div>
+                </div>
+            </div>
+
+            <div id="diagnostic-view" class="hidden space-y-6 sm:space-y-8">
+                <div class="bg-indigo-600 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl shadow-indigo-200">
+                    <h2 class="text-2xl sm:text-3xl font-black mb-2">Diagnóstico Vocal</h2>
+                    <p class="text-indigo-100" id="diagnostic-student-name"></p>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow space-y-6">
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Voz de Peito:</label>
+                        <select id="diag-peito" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Voz de Cabeça:</label>
+                        <select id="diag-cabeca" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Conexão (Mix):</label>
+                        <select id="diag-conexao" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Qualidade da Voz:</label>
+                        <select id="diag-qualidade" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="tensa">Tensa</option>
+                            <option value="fraca">Fraca</option>
+                            <option value="equilibrada">Equilibrada</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="voltarListaAlunos()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-2xl transition-all">
+                            CANCELAR
+                        </button>
+                        <button onclick="salvarDiagnostico()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-md">
+                            GERAR METAS
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -108,12 +170,14 @@
                     <i data-lucide="activity" class="absolute -right-6 -bottom-6 w-32 h-32 sm:w-48 sm:h-48 text-white/10 -rotate-12"></i>
                 </div>
 
-                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                <div id="observacoes-container" class="hidden bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
                     <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-base sm:text-lg">
-                        <i data-lucide="text-quote" class="text-indigo-600 w-5 h-5"></i> Observações Técnicas:
+                        <i data-lucide="text-quote" class="text-indigo-600 w-5 h-5"></i> Observações do Professor:
                     </h3>
                     <p id="student-notes-display" class="text-slate-600 leading-relaxed italic bg-slate-50 p-4 sm:p-6 rounded-2xl border-l-4 border-indigo-500 font-medium text-sm sm:text-base"></p>
                 </div>
+
+                <div id="metas-container" class="space-y-3"></div>
 
                 <div id="link-container"></div>
             </div>
@@ -122,7 +186,28 @@
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('bruno_vocal_db')) || [];
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZcYERuD0zKcvXHzDXSMwO6bYR40mm9jE",
+            authDomain: "bruno-musica.firebaseapp.com",
+            databaseURL: "https://bruno-musica-default-rtdb.firebaseio.com",
+            projectId: "bruno-musica",
+            storageBucket: "bruno-musica.firebasestorage.app",
+            messagingSenderId: "140388943972",
+            appId: "1:140388943972:web:f0ca1dd3d0e3e9b4cb3771"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let currentDiagnosticStudent = null;
+
+        function gerarCodigo() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let codigo = '';
+            for (let i = 0; i < 6; i++) {
+                codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return codigo;
+        }
 
         function tentarLogin() {
             const email = document.getElementById('login-email').value.trim();
@@ -133,12 +218,32 @@
                 return;
             }
 
-            const aluno = db.find(a => a.email === email && a.pass === pass);
-            if (aluno) {
-                showApp('student', aluno);
-            } else {
-                alert('E-mail ou senha incorretos.');
+            alert('E-mail ou senha incorretos.');
+        }
+
+        function acessarComCodigo() {
+            const codigo = document.getElementById('student-code').value.trim().toUpperCase();
+            if (!codigo || codigo.length !== 6) {
+                alert('Digite um código válido de 6 caracteres');
+                return;
             }
+
+            db.ref('students-canto').orderByChild('codigo').equalTo(codigo).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        const studentData = Object.values(snapshot.val())[0];
+                        db.ref('diagnostics-canto/' + studentData.id).once('value')
+                            .then(diagSnapshot => {
+                                if (diagSnapshot.exists()) {
+                                    showApp('student', { ...studentData, diagnostic: diagSnapshot.val() });
+                                } else {
+                                    alert('Diagnóstico ainda não realizado. Entre em contato com o professor.');
+                                }
+                            });
+                    } else {
+                        alert('Código não encontrado. Verifique e tente novamente.');
+                    }
+                });
         }
 
         function showApp(role, user) {
@@ -149,21 +254,32 @@
 
             if (role === 'admin') {
                 document.getElementById('admin-view').classList.remove('hidden');
+                document.getElementById('diagnostic-view').classList.add('hidden');
                 document.getElementById('student-view').classList.add('hidden');
                 renderAlunos();
             } else {
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('admin-view').classList.add('hidden');
-                document.getElementById('student-notes-display').innerText = user.notes || 'Notas em breve.';
+                document.getElementById('diagnostic-view').classList.add('hidden');
+                
                 document.getElementById('welcome-msg').innerText = `Olá, ${user.name.split(' ')[0]}!`;
+                
+                if (user.notes && user.notes.trim()) {
+                    document.getElementById('observacoes-container').classList.remove('hidden');
+                    document.getElementById('student-notes-display').innerText = user.notes;
+                } else {
+                    document.getElementById('observacoes-container').classList.add('hidden');
+                }
+
+                renderMetasAluno(user.diagnostic);
                 
                 const linkDiv = document.getElementById('link-container');
                 if (user.link) {
                     linkDiv.innerHTML = `
-                        <a href="${user.link}" target="_blank" class="flex items-center justify-between bg-slate-900 text-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] font-bold hover:bg-black transition-all shadow-xl shadow-slate-200 group">
+                        <a href="${user.link}" target="_blank" class="flex items-center justify-between bg-slate-900 text-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] font-bold hover:bg-black transition-all shadow-xl shadow-slate-200 group goal-card">
                             <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="bg-indigo-600 p-2 sm:p-3 rounded-xl"><i data-lucide="file-down" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
-                                <span class="text-sm sm:text-lg">BAIXAR MEU DIAGNÓSTICO PDF</span>
+                                <span class="text-sm sm:text-lg">BAIXAR DIAGNÓSTICO COMPLETO (PDF)</span>
                             </div>
                             <i data-lucide="arrow-up-right" class="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-all"></i>
                         </a>`;
@@ -173,76 +289,264 @@
             window.scrollTo(0, 0);
         }
 
+        function renderMetasAluno(diagnostic) {
+            const container = document.getElementById('metas-container');
+            if (!diagnostic) {
+                container.innerHTML = '<p class="text-center text-slate-400 italic p-8">Diagnóstico em andamento...</p>';
+                return;
+            }
+
+            const metas = gerarMetas(diagnostic);
+            container.innerHTML = metas.map((meta, idx) => `
+                <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 card-shadow goal-card">
+                    <div class="flex items-start gap-3 sm:gap-4">
+                        <div class="bg-indigo-100 text-indigo-600 font-bold w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-sm sm:text-base flex-shrink-0">
+                            ${idx + 1}
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-800 mb-2 text-sm sm:text-base">${meta.titulo}</h4>
+                            <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${meta.descricao}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function gerarMetas(diagnostic) {
+            const metas = [];
+
+            // Voz de Peito
+            if (diagnostic.peito === 'ausente') {
+                metas.push({
+                    titulo: 'Desenvolver Voz de Peito',
+                    descricao: 'Trabalhar exercícios de sons graves e médios para ativar a musculatura da voz de peito. Foco em sons como "UH", "OH" em escalas descendentes.'
+                });
+            } else if (diagnostic.peito === 'inconsistente') {
+                metas.push({
+                    titulo: 'Estabilizar Voz de Peito',
+                    descricao: 'Fortalecer a consistência da voz de peito através de exercícios de sustentação e variação dinâmica em região grave-média.'
+                });
+            }
+
+            // Voz de Cabeça
+            if (diagnostic.cabeca === 'ausente') {
+                metas.push({
+                    titulo: 'Desenvolver Voz de Cabeça',
+                    descricao: 'Trabalhar sons agudos leves com "NG", "HUM" e vogais fechadas (I, U) para acessar o registro de cabeça de forma saudável.'
+                });
+            } else if (diagnostic.cabeca === 'inconsistente') {
+                metas.push({
+                    titulo: 'Estabilizar Voz de Cabeça',
+                    descricao: 'Praticar exercícios de sustentação em região aguda, mantendo leveza e controle do ar para estabilizar o registro.'
+                });
+            }
+
+            // Conexão
+            if (diagnostic.conexao === 'ausente') {
+                metas.push({
+                    titulo: 'Criar Conexão entre Registros',
+                    descricao: 'Introduzir exercícios de sirene e slides vocais para começar a unir voz de peito e cabeça através da região de passagem.'
+                });
+            } else if (diagnostic.conexao === 'inconsistente') {
+                metas.push({
+                    titulo: 'Suavizar Transição entre Registros',
+                    descricao: 'Trabalhar a zona de passagem com exercícios específicos de mix, eliminando quebras e estabilizando a transição entre peito e cabeça.'
+                });
+            }
+
+            // Qualidade da Voz
+            if (diagnostic.qualidade === 'tensa') {
+                metas.push({
+                    titulo: 'Reduzir Tensão Vocal',
+                    descricao: 'Aplicar técnicas de relaxamento, exercícios de flow e sons semi-oclusos (canudo, LIP TRILL) para liberar tensão excessiva na laringe e musculatura.'
+                });
+            } else if (diagnostic.qualidade === 'fraca') {
+                metas.push({
+                    titulo: 'Fortalecer Apoio e Projeção',
+                    descricao: 'Desenvolver suporte respiratório e trabalhar exercícios de dinâmica (crescendo/decrescendo) para ganhar corpo e projeção vocal sem tensão.'
+                });
+            }
+
+            // Se tudo estiver presente/equilibrado
+            if (diagnostic.peito === 'presente' && diagnostic.cabeca === 'presente' && 
+                diagnostic.conexao === 'presente' && diagnostic.qualidade === 'equilibrada') {
+                metas.push({
+                    titulo: 'Refinamento Técnico',
+                    descricao: 'Trabalhar nuances interpretativas, agilidade vocal, ornamentação e expansão de tessitura para elevar o nível artístico.'
+                });
+                metas.push({
+                    titulo: 'Repertório Avançado',
+                    descricao: 'Aplicar a técnica consolidada em músicas de maior complexidade, explorando diferentes estilos e exigências vocais.'
+                });
+            }
+
+            return metas.length > 0 ? metas : [{
+                titulo: 'Avaliação Completa Necessária',
+                descricao: 'Aguarde a finalização do diagnóstico para receber metas personalizadas.'
+            }];
+        }
+
         function cadastrarAluno() {
-            const name = document.getElementById('st-name').value;
-            const email = document.getElementById('st-email').value;
-            const pass = document.getElementById('st-pass').value;
-            const link = document.getElementById('st-link').value;
-            const notes = document.getElementById('st-notes').value;
+            const name = document.getElementById('st-name').value.trim();
+            const link = document.getElementById('st-link').value.trim();
+            const notes = document.getElementById('st-notes').value.trim();
 
-            if(!name || !email || !pass) return alert('Campos obrigatórios faltando.');
+            if (!name) {
+                alert('Nome do aluno é obrigatório.');
+                return;
+            }
 
-            db.push({ id: Date.now(), name, email, pass, link, notes });
-            localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
-            document.querySelectorAll('#admin-view input, #admin-view textarea').forEach(i => i.value = '');
+            const studentId = Date.now().toString();
+            const codigo = gerarCodigo();
+
+            const studentData = {
+                id: studentId,
+                name,
+                link,
+                notes,
+                codigo,
+                createdAt: new Date().toISOString()
+            };
+
+            db.ref('students-canto/' + studentId).set(studentData)
+                .then(() => {
+                    document.querySelectorAll('#admin-view input, #admin-view textarea').forEach(i => i.value = '');
+                    currentDiagnosticStudent = studentData;
+                    mostrarDiagnostico();
+                })
+                .catch(error => {
+                    alert('Erro ao cadastrar: ' + error.message);
+                });
+        }
+
+        function mostrarDiagnostico() {
+            document.getElementById('admin-view').classList.add('hidden');
+            document.getElementById('diagnostic-view').classList.remove('hidden');
+            document.getElementById('diagnostic-student-name').innerText = currentDiagnosticStudent.name;
+            
+            ['diag-peito', 'diag-cabeca', 'diag-conexao', 'diag-qualidade'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            lucide.createIcons();
+        }
+
+        function voltarListaAlunos() {
+            currentDiagnosticStudent = null;
+            document.getElementById('diagnostic-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
             renderAlunos();
-            alert('Cadastrado!');
+        }
+
+        function salvarDiagnostico() {
+            const diagnostic = {
+                peito: document.getElementById('diag-peito').value,
+                cabeca: document.getElementById('diag-cabeca').value,
+                conexao: document.getElementById('diag-conexao').value,
+                qualidade: document.getElementById('diag-qualidade').value
+            };
+
+            if (!diagnostic.peito || !diagnostic.cabeca || !diagnostic.conexao || !diagnostic.qualidade) {
+                alert('Preencha todos os campos do diagnóstico.');
+                return;
+            }
+
+            db.ref('diagnostics-canto/' + currentDiagnosticStudent.id).set(diagnostic)
+                .then(() => {
+                    alert(`✅ Diagnóstico salvo!\n\nCódigo de acesso: ${currentDiagnosticStudent.codigo}\n\nO aluno pode usar este código para acessar as metas.`);
+                    voltarListaAlunos();
+                })
+                .catch(error => {
+                    alert('Erro ao salvar diagnóstico: ' + error.message);
+                });
         }
 
         function renderAlunos() {
             const lista = document.getElementById('lista-alunos');
-            if (db.length === 0) {
-                lista.innerHTML = `<p class="p-10 text-center text-slate-400 italic">Vazio.</p>`;
-                return;
-            }
-            lista.innerHTML = db.map(a => `
-                <div class="p-4 sm:p-6 flex justify-between items-center hover:bg-slate-50">
-                    <div class="max-w-[70%]">
-                        <p class="font-bold text-slate-800 text-sm sm:text-base truncate">${a.name}</p>
-                        <p class="text-[10px] sm:text-xs text-slate-500 mt-1">E-mail: ${a.email} | Senha: ${a.pass}</p>
-                    </div>
-                    <button onclick="deletarAluno(${a.id})" class="text-rose-400 p-2 hover:bg-rose-50 rounded-xl"><i data-lucide="user-minus" class="w-5 h-5"></i></button>
-                </div>`).join('');
-            lucide.createIcons();
+            
+            db.ref('students-canto').once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        lista.innerHTML = `<p class="p-10 text-center text-slate-400 italic">Nenhum aluno cadastrado.</p>`;
+                        return;
+                    }
+
+                    const alunos = [];
+                    snapshot.forEach(child => {
+                        alunos.push(child.val());
+                    });
+
+                    lista.innerHTML = alunos.map(a => `
+                        <div class="p-4 sm:p-6 flex flex-col sm:flex-row justify-between sm:items-center hover:bg-slate-50 gap-3">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800 text-sm sm:text-base">${a.name}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 mt-1">Código: <span class="font-mono font-bold text-indigo-600">${a.codigo}</span></p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="copiarCodigo('${a.codigo}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-xl" title="Copiar código">
+                                    <i data-lucide="copy" class="w-5 h-5"></i>
+                                </button>
+                                <button onclick="editarDiagnostico('${a.id}')" class="text-slate-600 hover:bg-slate-100 p-2 rounded-xl" title="Editar diagnóstico">
+                                    <i data-lucide="edit" class="w-5 h-5"></i>
+                                </button>
+                                <button onclick="deletarAluno('${a.id}')" class="text-rose-400 hover:bg-rose-50 p-2 rounded-xl" title="Excluir aluno">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>`).join('');
+                    lucide.createIcons();
+                });
+        }
+
+        function copiarCodigo(codigo) {
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('Código copiado: ' + codigo);
+            });
+        }
+
+        function editarDiagnostico(studentId) {
+            db.ref('students-canto/' + studentId).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        currentDiagnosticStudent = snapshot.val();
+                        
+                        db.ref('diagnostics-canto/' + studentId).once('value')
+                            .then(diagSnapshot => {
+                                mostrarDiagnostico();
+                                
+                                if (diagSnapshot.exists()) {
+                                    const diag = diagSnapshot.val();
+                                    document.getElementById('diag-peito').value = diag.peito || '';
+                                    document.getElementById('diag-cabeca').value = diag.cabeca || '';
+                                    document.getElementById('diag-conexao').value = diag.conexao || '';
+                                    document.getElementById('diag-qualidade').value = diag.qualidade || '';
+                                }
+                            });
+                    }
+                });
         }
 
         function deletarAluno(id) {
-            if(confirm('Excluir?')) {
-                db = db.filter(a => a.id !== id);
-                localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
-                renderAlunos();
+            if (confirm('Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.')) {
+                Promise.all([
+                    db.ref('students-canto/' + id).remove(),
+                    db.ref('diagnostics-canto/' + id).remove()
+                ])
+                .then(() => {
+                    alert('Aluno excluído com sucesso!');
+                    renderAlunos();
+                })
+                .catch(error => {
+                    alert('Erro ao excluir: ' + error.message);
+                });
             }
         }
 
-        function exportarDados() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "backup_alunos_vocal.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+        function logout() {
+            location.reload();
         }
 
-        function importarDados(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedDb = JSON.parse(e.target.result);
-                    if (confirm(`Deseja importar ${importedDb.length} alunos? Isso substituirá os dados atuais.`)) {
-                        db = importedDb;
-                        localStorage.setItem('bruno_vocal_db', JSON.stringify(db));
-                        renderAlunos();
-                        alert('Dados importados!');
-                    }
-                } catch (err) { alert('Arquivo inválido.'); }
-            };
-            reader.readAsText(file);
-        }
-
-        function logout() { location.reload(); }
         lucide.createIcons();
     </script>
 </body>
