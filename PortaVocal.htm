@@ -88,6 +88,517 @@
                         <textarea id="st-notes" placeholder="Observações gerais (opcional)..." class="p-4 bg-slate-50 border border-slate-200 rounded-2xl h-24 outline-none focus:ring-2 focus:ring-indigo-500 w-full"></textarea>
                     </div>
                     <button onclick="cadastrarAluno()" class="mt-6 w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-extrabold hover:bg-indigo-700 transition-all shadow-md">
+                        CADASTRAR ALUNO
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 overflow-hidden card-shadow">
+                    <div class="p-5 sm:p-6 border-b bg-slate-50/50">
+                        <div class="flex items-center gap-2 font-bold text-slate-700">
+                            <i data-lucide="users" class="w-5 h-5"></i> Alunos Cadastrados
+                        </div>
+                    </div>
+                    <div class="divide-y divide-slate-100" id="lista-alunos"></div>
+                </div>
+            </div>
+
+            <div id="diagnostic-view" class="hidden space-y-6 sm:space-y-8">
+                <div class="bg-indigo-600 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl shadow-indigo-200">
+                    <h2 class="text-2xl sm:text-3xl font-black mb-2">Diagnóstico Vocal</h2>
+                    <p class="text-indigo-100" id="diagnostic-student-name"></p>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow space-y-6">
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Voz de Peito:</label>
+                        <select id="diag-peito" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Voz de Cabeça:</label>
+                        <select id="diag-cabeca" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Conexão (Mix):</label>
+                        <select id="diag-conexao" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="inconsistente">Inconsistente</option>
+                            <option value="presente">Presente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Qualidade da Voz:</label>
+                        <select id="diag-qualidade" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Selecione...</option>
+                            <option value="tensa">Tensa</option>
+                            <option value="fraca">Fraca</option>
+                            <option value="equilibrada">Equilibrada</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200">
+                        <label class="block font-bold text-slate-800 mb-3">Metas e Orientações Personalizadas:</label>
+                        <textarea id="diag-metas" placeholder="Escreva aqui as metas específicas e orientações para este aluno..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl h-40 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        <p class="text-xs text-slate-500 mt-2">Campo obrigatório: descreva o plano de desenvolvimento vocal específico para este aluno.</p>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Observações Adicionais (opcional):</label>
+                        <textarea id="diag-obs" placeholder="Observações técnicas, comentários sobre a aula..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl h-24 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-800 mb-3">Link do PDF (opcional):</label>
+                        <input type="text" id="diag-pdf" placeholder="Link do Google Drive com exercícios" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="voltarListaAlunos()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-2xl transition-all">
+                            CANCELAR
+                        </button>
+                        <button onclick="salvarDiagnostico()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-md">
+                            SALVAR DIAGNÓSTICO
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="student-view" class="hidden space-y-4 sm:space-y-6">
+                <div class="bg-indigo-600 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-indigo-200 font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-2">Professor Bruno Phelipe</p>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-2">Seu Plano Vocal</h2>
+                        <p class="text-indigo-100 text-base sm:text-lg opacity-90" id="welcome-msg"></p>
+                    </div>
+                    <i data-lucide="activity" class="absolute -right-6 -bottom-6 w-32 h-32 sm:w-48 sm:h-48 text-white/10 -rotate-12"></i>
+                </div>
+
+                <div id="observacoes-container" class="hidden bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-base sm:text-lg">
+                        <i data-lucide="text-quote" class="text-indigo-600 w-5 h-5"></i> Observações do Professor:
+                    </h3>
+                    <p id="student-notes-display" class="text-slate-600 leading-relaxed italic bg-slate-50 p-4 sm:p-6 rounded-2xl border-l-4 border-indigo-500 font-medium text-sm sm:text-base"></p>
+                </div>
+
+                <div id="metas-container" class="space-y-3"></div>
+
+                <div id="link-container"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZcYERuD0zKcvXHzDXSMwO6bYR40mm9jE",
+            authDomain: "bruno-musica.firebaseapp.com",
+            databaseURL: "https://bruno-musica-default-rtdb.firebaseio.com",
+            projectId: "bruno-musica",
+            storageBucket: "bruno-musica.firebasestorage.app",
+            messagingSenderId: "140388943972",
+            appId: "1:140388943972:web:f0ca1dd3d0e3e9b4cb3771"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let currentDiagnosticStudent = null;
+
+        function gerarCodigo() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let codigo = '';
+            for (let i = 0; i < 6; i++) {
+                codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return codigo;
+        }
+
+        function tentarLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+
+            if (email === 'bruno@vocal.com' && pass === 'admin123') {
+                showApp('admin', { name: 'Bruno Phelipe' });
+                return;
+            }
+
+            alert('E-mail ou senha incorretos.');
+        }
+
+        function acessarComCodigo() {
+            const codigo = document.getElementById('student-code').value.trim().toUpperCase();
+            if (!codigo || codigo.length !== 6) {
+                alert('Digite um código válido de 6 caracteres');
+                return;
+            }
+
+            db.ref('students-canto').orderByChild('codigo').equalTo(codigo).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        const studentData = Object.values(snapshot.val())[0];
+                        db.ref('diagnostics-canto/' + studentData.id).once('value')
+                            .then(diagSnapshot => {
+                                if (diagSnapshot.exists()) {
+                                    showApp('student', { ...studentData, diagnostic: diagSnapshot.val() });
+                                } else {
+                                    alert('Diagnóstico ainda não realizado. Entre em contato com o professor.');
+                                }
+                            });
+                    } else {
+                        alert('Código não encontrado. Verifique e tente novamente.');
+                    }
+                });
+        }
+
+        function showApp(role, user) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('display-user-name').innerText = user.name;
+            document.getElementById('display-role').innerText = role === 'admin' ? 'Acesso Professor' : 'Acesso Aluno';
+
+            if (role === 'admin') {
+                document.getElementById('admin-view').classList.remove('hidden');
+                document.getElementById('diagnostic-view').classList.add('hidden');
+                document.getElementById('student-view').classList.add('hidden');
+                renderAlunos();
+            } else {
+                document.getElementById('student-view').classList.remove('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+                document.getElementById('diagnostic-view').classList.add('hidden');
+                
+                document.getElementById('welcome-msg').innerText = `Olá, ${user.name.split(' ')[0]}!`;
+                
+                if (user.notes && user.notes.trim()) {
+                    document.getElementById('observacoes-container').classList.remove('hidden');
+                    document.getElementById('student-notes-display').innerText = user.notes;
+                } else {
+                    document.getElementById('observacoes-container').classList.add('hidden');
+                }
+
+                renderMetasAluno(user.diagnostic);
+                
+                const linkDiv = document.getElementById('link-container');
+                if (user.link) {
+                    linkDiv.innerHTML = `
+                        <a href="${user.link}" target="_blank" class="flex items-center justify-between bg-slate-900 text-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] font-bold hover:bg-black transition-all shadow-xl shadow-slate-200 group goal-card">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <div class="bg-indigo-600 p-2 sm:p-3 rounded-xl"><i data-lucide="file-down" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                                <span class="text-sm sm:text-lg">BAIXAR DIAGNÓSTICO COMPLETO (PDF)</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-all"></i>
+                        </a>`;
+                } else { linkDiv.innerHTML = ""; }
+            }
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        function renderMetasAluno(diagnostic) {
+            const container = document.getElementById('metas-container');
+            if (!diagnostic || !diagnostic.metas) {
+                container.innerHTML = '<p class="text-center text-slate-400 italic p-8">Diagnóstico ainda não realizado pelo professor.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-base sm:text-lg">
+                        <i data-lucide="target" class="text-indigo-600 w-5 h-5"></i> Suas Metas e Orientações:
+                    </h3>
+                    <div class="text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 p-5 sm:p-6 rounded-2xl border-l-4 border-indigo-500 text-sm sm:text-base">${diagnostic.metas}</div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function cadastrarAluno() {
+            const name = document.getElementById('st-name').value.trim();
+            const link = document.getElementById('st-link').value.trim();
+            const notes = document.getElementById('st-notes').value.trim();
+
+            if (!name) {
+                alert('Nome do aluno é obrigatório.');
+                return;
+            }
+
+            const studentId = Date.now().toString();
+            const codigo = gerarCodigo();
+
+            const studentData = {
+                id: studentId,
+                name,
+                link,
+                notes,
+                codigo,
+                createdAt: new Date().toISOString()
+            };
+
+            db.ref('students-canto/' + studentId).set(studentData)
+                .then(() => {
+                    alert(`✅ Aluno cadastrado!\n\nCódigo: ${codigo}\n\nAgora você pode fazer o diagnóstico clicando em "Fazer Diagnóstico" na lista.`);
+                    document.querySelectorAll('#admin-view input, #admin-view textarea').forEach(i => i.value = '');
+                    renderAlunos();
+                })
+                .catch(error => {
+                    alert('Erro ao cadastrar: ' + error.message);
+                });
+        }
+
+        function mostrarDiagnostico() {
+            document.getElementById('admin-view').classList.add('hidden');
+            document.getElementById('diagnostic-view').classList.remove('hidden');
+            document.getElementById('diagnostic-student-name').innerText = currentDiagnosticStudent.name;
+            
+            ['diag-peito', 'diag-cabeca', 'diag-conexao', 'diag-qualidade'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('diag-metas').value = '';
+            document.getElementById('diag-obs').value = currentDiagnosticStudent.notes || '';
+            document.getElementById('diag-pdf').value = currentDiagnosticStudent.link || '';
+            
+            lucide.createIcons();
+        }
+
+        function voltarListaAlunos() {
+            currentDiagnosticStudent = null;
+            document.getElementById('diagnostic-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
+            renderAlunos();
+        }
+
+        function salvarDiagnostico() {
+            const metas = document.getElementById('diag-metas').value.trim();
+            const obs = document.getElementById('diag-obs').value.trim();
+            const pdf = document.getElementById('diag-pdf').value.trim();
+
+            const diagnostic = {
+                peito: document.getElementById('diag-peito').value,
+                cabeca: document.getElementById('diag-cabeca').value,
+                conexao: document.getElementById('diag-conexao').value,
+                qualidade: document.getElementById('diag-qualidade').value,
+                metas: metas,
+                observacoes: obs
+            };
+
+            if (!diagnostic.peito || !diagnostic.cabeca || !diagnostic.conexao || !diagnostic.qualidade) {
+                alert('Preencha todos os 4 critérios de avaliação.');
+                return;
+            }
+
+            if (!metas) {
+                alert('O campo "Metas e Orientações" é obrigatório.');
+                return;
+            }
+
+            // Atualizar observações e PDF no cadastro do aluno
+            const updates = {
+                notes: obs,
+                link: pdf
+            };
+
+            Promise.all([
+                db.ref('diagnostics-canto/' + currentDiagnosticStudent.id).set(diagnostic),
+                db.ref('students-canto/' + currentDiagnosticStudent.id).update(updates)
+            ])
+            .then(() => {
+                alert(`✅ Diagnóstico salvo com sucesso!\n\nCódigo de acesso: ${currentDiagnosticStudent.codigo}`);
+                voltarListaAlunos();
+            })
+            .catch(error => {
+                alert('Erro ao salvar diagnóstico: ' + error.message);
+            });
+        }
+
+        function renderAlunos() {
+            const lista = document.getElementById('lista-alunos');
+            
+            db.ref('students-canto').once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        lista.innerHTML = `<p class="p-10 text-center text-slate-400 italic">Nenhum aluno cadastrado.</p>`;
+                        return;
+                    }
+
+                    const alunos = [];
+                    snapshot.forEach(child => {
+                        alunos.push(child.val());
+                    });
+
+                    lista.innerHTML = alunos.map(a => `
+                        <div class="p-4 sm:p-6 flex flex-col sm:flex-row justify-between sm:items-center hover:bg-slate-50 gap-3">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800 text-sm sm:text-base">${a.name}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 mt-1">Código: <span class="font-mono font-bold text-indigo-600">${a.codigo}</span></p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="copiarCodigo('${a.codigo}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-xl" title="Copiar código">
+                                    <i data-lucide="copy" class="w-5 h-5"></i>
+                                </button>
+                                <button onclick="editarDiagnostico('${a.id}')" class="text-slate-600 hover:bg-slate-100 p-2 rounded-xl" title="Editar diagnóstico">
+                                    <i data-lucide="edit" class="w-5 h-5"></i>
+                                </button>
+                                <button onclick="deletarAluno('${a.id}')" class="text-rose-400 hover:bg-rose-50 p-2 rounded-xl" title="Excluir aluno">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>`).join('');
+                    lucide.createIcons();
+                });
+        }
+
+        function copiarCodigo(codigo) {
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('Código copiado: ' + codigo);
+            });
+        }
+
+        function editarDiagnostico(studentId) {
+            db.ref('students-canto/' + studentId).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        currentDiagnosticStudent = snapshot.val();
+                        
+                        db.ref('diagnostics-canto/' + studentId).once('value')
+                            .then(diagSnapshot => {
+                                mostrarDiagnostico();
+                                
+                                if (diagSnapshot.exists()) {
+                                    const diag = diagSnapshot.val();
+                                    document.getElementById('diag-peito').value = diag.peito || '';
+                                    document.getElementById('diag-cabeca').value = diag.cabeca || '';
+                                    document.getElementById('diag-conexao').value = diag.conexao || '';
+                                    document.getElementById('diag-qualidade').value = diag.qualidade || '';
+                                }
+                            });
+                    }
+                });
+        }
+
+        function deletarAluno(id) {
+            if (confirm('Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.')) {
+                Promise.all([
+                    db.ref('students-canto/' + id).remove(),
+                    db.ref('diagnostics-canto/' + id).remove()
+                ])
+                .then(() => {
+                    alert('Aluno excluído com sucesso!');
+                    renderAlunos();
+                })
+                .catch(error => {
+                    alert('Erro ao excluir: ' + error.message);
+                });
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Vocal - Bruno Phelipe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        input, textarea, select { font-size: 16px !important; } 
+        .goal-card { transition: all 0.3s ease; }
+        .goal-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-slate-900">
+        <div class="bg-white rounded-[2rem] shadow-2xl p-6 sm:p-10 w-full max-w-sm">
+            <div class="text-center mb-8 sm:mb-10">
+                <div class="bg-indigo-600 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-xl shadow-indigo-500/40">
+                    <i data-lucide="mic-2" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Portal Vocal</h2>
+                <p class="text-slate-500 text-sm mt-1">Bruno Phelipe</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="relative">
+                    <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="text" id="login-email" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700" placeholder="E-mail de acesso">
+                </div>
+                <div class="relative">
+                    <i data-lucide="key" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="password" id="login-pass" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700" placeholder="Sua senha">
+                </div>
+                <button onclick="tentarLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2">
+                    Entrar no Portal
+                </button>
+                
+                <div class="mt-6 pt-6 border-t border-slate-200">
+                    <p class="text-center text-xs text-slate-500 mb-3">Ou acesse com código de aluno:</p>
+                    <div class="relative">
+                        <i data-lucide="hash" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                        <input type="text" id="student-code" class="w-full p-4 pl-12 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-700 uppercase" placeholder="CÓDIGO" maxlength="6">
+                    </div>
+                    <button onclick="acessarComCodigo()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl transition-all mt-3 active:scale-95">
+                        Acessar como Aluno
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden">
+        <nav class="glass-nav sticky top-0 z-50 p-4">
+            <div class="max-w-5xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2 font-black text-slate-900 uppercase tracking-tighter text-base sm:text-lg">
+                    <i data-lucide="waves" class="text-indigo-600 w-5 h-5"></i> BRUNO PHELIPE
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="text-right">
+                        <p id="display-user-name" class="text-xs sm:text-sm font-bold text-slate-800 leading-none"></p>
+                        <span id="display-role" class="text-[9px] sm:text-[10px] uppercase text-indigo-500 font-bold tracking-widest"></span>
+                    </div>
+                    <button onclick="logout()" class="bg-slate-100 text-slate-500 hover:text-rose-500 p-2 sm:p-2.5 rounded-xl transition-all">
+                        <i data-lucide="log-out" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto p-4 sm:p-6">
+            
+            <div id="admin-view" class="hidden space-y-6 sm:space-y-8">
+                <div class="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200 card-shadow">
+                    <h2 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
+                        <i data-lucide="user-plus" class="text-indigo-600 w-5 h-5"></i> Cadastrar Aluno
+                    </h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        <input type="text" id="st-name" placeholder="Nome Completo" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <input type="text" id="st-link" placeholder="Link do PDF (Google Drive) - Opcional" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                        <textarea id="st-notes" placeholder="Observações gerais (opcional)..." class="p-4 bg-slate-50 border border-slate-200 rounded-2xl h-24 outline-none focus:ring-2 focus:ring-indigo-500 w-full"></textarea>
+                    </div>
+                    <button onclick="cadastrarAluno()" class="mt-6 w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-extrabold hover:bg-indigo-700 transition-all shadow-md">
                         CADASTRAR E FAZER DIAGNÓSTICO
                     </button>
                 </div>
@@ -551,3 +1062,4 @@
     </script>
 </body>
 </html>
+
