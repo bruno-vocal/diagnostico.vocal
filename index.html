@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VocalQuest - Aprenda Técnica Vocal Jogando</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="mascot-loader">🎤</div>
+            <h1 class="loading-title">VocalQuest</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Preparando sua jornada vocal...</p>
+        </div>
+    </div>
+
+    <!-- Login/Register Screen -->
+    <div id="authScreen" class="screen active">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="mascot-welcome">🎤</div>
+                <h1 class="app-title">VocalQuest</h1>
+                <p class="app-subtitle">Aprenda técnica vocal de forma divertida e gamificada!</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Entrar</button>
+                <button class="auth-tab" data-tab="register">Criar Conta</button>
+            </div>
+
+            <div id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                </div>
+                <button class="btn btn-primary btn-large" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </div>
+
+            <div id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerUsername"><i class="fas fa-user"></i> Nome de Usuário</label>
+                    <input type="text" id="registerUsername" placeholder="Escolha um nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" placeholder="seu@email.com" required>
+                </div>
+                <button class="btn btn-primary btn-large" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Criar Conta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo">
+                    <span class="mascot">🎤</span>
+                    <span class="app-name">VocalQuest</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <div class="nav-stats">
+                    <div class="stat-item" title="Dias consecutivos">
+                        <i class="fas fa-fire"></i>
+                        <span id="streakDisplay">0</span>
+                    </div>
+                    <div class="stat-item" title="Moedas">
+                        <i class="fas fa-coins"></i>
+                        <span id="coinsDisplay">0</span>
+                    </div>
+                    <div class="stat-item" title="Vidas">
+                        <i class="fas fa-heart"></i>
+                        <span id="livesDisplay">5</span>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="nav-btn" id="profileBtn" title="Perfil">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Bottom Tab Bar -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-page="home">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </button>
+            <button class="tab-btn" data-page="lessons">
+                <i class="fas fa-map"></i>
+                <span>Lições</span>
+            </button>
+            <button class="tab-btn" data-page="practice">
+                <i class="fas fa-dumbbell"></i>
+                <span>Prática</span>
+            </button>
+            <button class="tab-btn" data-page="ranking">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </button>
+            <button class="tab-btn" data-page="shop">
+                <i class="fas fa-store"></i>
+                <span>Loja</span>
+            </button>
+        </div>
+
+        <!-- Page Container -->
+        <div class="page-container">
+            <!-- Home/Dashboard Page -->
+            <div id="homePage" class="page active">
+                <div class="page-content">
+                    <div class="welcome-section">
+                        <h2 class="welcome-title">Olá, <span id="usernameDisplay">Cantor</span>! 👋</h2>
+                        <p class="welcome-subtitle">Continue sua jornada vocal hoje!</p>
+                    </div>
+
+                    <div class="daily-goal-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bullseye"></i> Meta Diária</h3>
+                            <span class="goal-status" id="goalStatus">0/3 exercícios</span>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-bar">
+                                <div class="goal-fill" id="goalFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <p class="goal-message" id="goalMessage">Complete 3 exercícios para manter sua sequência!</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-info">
+                                <h4 id="homeStreak">0</h4>
+                                <p>Dias de Sequência</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-info">
+                                <h4 id="homeXp">0</h4>
+                                <p>XP Total</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-info">
+                                <h4 id="homeLessons">0</h4>
+                                <p>Lições Completas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-info">
+                                <h4 id="homeAchievements">0</h4>
+                                <p>Conquistas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="continue-section">
+                        <h3 class="section-title">Continue de onde parou</h3>
+                        <div class="continue-card" id="continueCard">
+                            <div class="continue-icon">📚</div>
+                            <div class="continue-info">
+                                <h4 id="nextLessonTitle">Carregando...</h4>
+                                <p id="nextLessonDesc">Preparando próxima lição...</p>
+                                <div class="lesson-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="nextLessonProgress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text" id="nextLessonProgressText">0%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="continueBtn">
+                                <i class="fas fa-play"></i> Continuar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="achievements-preview">
+                        <div class="section-header">
+                            <h3 class="section-title">Conquistas Recentes</h3>
+                            <button class="btn-text" id="viewAllAchievements">Ver todas</button>
+                        </div>
+                        <div class="achievements-list" id="recentAchievements">
+                            <div class="achievement-badge locked">
+                                <i class="fas fa-lock"></i>
+                                <span>???</span>
+                            </div>
+                            <div class="achievement-badge locked">
+                                <i class="fas fa-lock"></i>
+                                <span>???</span>
+                            </div>
+                            <div class="achievement-badge locked">
+                                <i class="fas fa-lock"></i>
+                                <span>???</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lessons Map Page -->
+            <div id="lessonsPage" class="page">
+                <div class="page-content">
+                    <div class="page-header">
+                        <h2>Mapa de Lições</h2>
+                        <p>Progresso: <span id="overallProgress">0%</span></p>
+                    </div>
+                    
+                    <div class="lessons-map" id="lessonsMap">
+                        <!-- Will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Page -->
+            <div id="practicePage" class="page">
+                <div class="page-content">
+                    <div class="page-header">
+                        <h2>Prática Livre</h2>
+                        <p>Revise qualquer exercício desbloqueado</p>
+                    </div>
+                    
+                    <div class="practice-categories" id="practiceCategories">
+                        <!-- Will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranking Page -->
+            <div id="rankingPage" class="page">
+                <div class="page-content">
+                    <div class="page-header">
+                        <h2><i class="fas fa-trophy"></i> Ranking Semanal</h2>
+                        <p>Compete com outros cantores!</p>
+                    </div>
+
+                    <div class="ranking-podium" id="rankingPodium">
+                        <!-- Top 3 users -->
+                    </div>
+
+                    <div class="ranking-list" id="rankingList">
+                        <!-- Remaining users -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Page -->
+            <div id="shopPage" class="page">
+                <div class="page-content">
+                    <div class="page-header">
+                        <h2><i class="fas fa-store"></i> Loja</h2>
+                        <p>Suas moedas: <span class="coin-amount" id="shopCoins">0</span> <i class="fas fa-coins"></i></p>
+                    </div>
+
+                    <div class="shop-tabs">
+                        <button class="shop-tab active" data-category="avatar">Avatar</button>
+                        <button class="shop-tab" data-category="boosts">Boosts</button>
+                        <button class="shop-tab" data-category="themes">Temas</button>
+                    </div>
+
+                    <div class="shop-items" id="shopItems">
+                        <!-- Will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-circle"></i> Perfil</h2>
+                <button class="close-btn" id="closeProfile">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-avatar-section">
+                    <div class="avatar-display" id="profileAvatar">
+                        <div class="avatar-body"></div>
+                        <div class="avatar-hair"></div>
+                        <div class="avatar-accessory"></div>
+                    </div>
+                    <h3 id="profileUsername">Usuário</h3>
+                    <p class="profile-level">Nível <span id="profileLevel">1</span></p>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <span class="stat-label">XP Total</span>
+                        <span class="stat-value" id="profileXp">0</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="stat-label">Sequência</span>
+                        <span class="stat-value" id="profileStreak">0 dias</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="stat-label">Lições Completas</span>
+                        <span class="stat-value" id="profileLessons">0</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="stat-label">Conquistas</span>
+                        <span class="stat-value" id="profileAchievementsCount">0</span>
+                    </div>
+                </div>
+
+                <div class="profile-achievements">
+                    <h3>Conquistas Desbloqueadas</h3>
+                    <div class="achievements-grid" id="profileAchievementsList">
+                        <!-- Will be dynamically generated -->
+                    </div>
+                </div>
+
+                <button class="btn btn-danger" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Modal -->
+    <div id="lessonModal" class="modal modal-fullscreen">
+        <div class="lesson-container">
+            <!-- Lesson Header -->
+            <div class="lesson-header">
+                <button class="close-btn" id="closeLesson">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="lesson-progress-bar">
+                    <div class="lesson-progress-fill" id="lessonProgressFill"></div>
+                </div>
+                <div class="lesson-lives">
+                    <i class="fas fa-heart"></i>
+                    <span id="lessonLives">5</span>
+                </div>
+            </div>
+
+            <!-- Exercise Content -->
+            <div class="exercise-content" id="exerciseContent">
+                <!-- Will be dynamically generated based on exercise type -->
+            </div>
+
+            <!-- Exercise Footer -->
+            <div class="exercise-footer">
+                <button class="btn btn-secondary" id="skipBtn" style="display: none;">
+                    Pular (-1 <i class="fas fa-coins"></i>)
+                </button>
+                <button class="btn btn-primary" id="checkAnswerBtn">
+                    Verificar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" class="modal">
+        <div class="modal-content results-content">
+            <div class="results-header">
+                <div class="results-icon" id="resultsIcon">⭐</div>
+                <h2 id="resultsTitle">Lição Completa!</h2>
+                <p id="resultsSubtitle">Parabéns!</p>
+            </div>
+            <div class="results-stats">
+                <div class="result-stat">
+                    <i class="fas fa-star"></i>
+                    <span id="resultsStars">3/3</span>
+                    <p>Estrelas</p>
+                </div>
+                <div class="result-stat">
+                    <i class="fas fa-coins"></i>
+                    <span id="resultsCoins">+50</span>
+                    <p>Moedas</p>
+                </div>
+                <div class="result-stat">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="resultsXp">+100</span>
+                    <p>XP</p>
+                </div>
+            </div>
+            <div class="results-actions">
+                <button class="btn btn-secondary" id="reviewBtn">
+                    <i class="fas fa-redo"></i> Revisar
+                </button>
+                <button class="btn btn-primary" id="continueResultsBtn">
+                    <i class="fas fa-arrow-right"></i> Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Unlock Notification -->
+    <div id="achievementNotif" class="achievement-notification">
+        <div class="achievement-content">
+            <i class="fas fa-trophy achievement-icon"></i>
+            <div class="achievement-info">
+                <h4>Conquista Desbloqueada!</h4>
+                <p id="achievementText">Nova conquista!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/gamification.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
